@@ -2,8 +2,10 @@ const path = require('path');
 const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
+const axios = require('axios');
+const cheerio = require('cheerio');
 
-const {generateMessage} = require('./utils/message');
+const {generateMessage, generateMeme} = require('./utils/message');
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
 
@@ -24,6 +26,23 @@ io.on('connection', (socket) => {
     socket.on('createMessage', (message, callback) => {
         io.emit('newMessage', generateMessage(message.from, message.text));
         callback();
+    });
+
+    socket.on('fireMeme', (message, callback) => {
+        axios.get('https://knowyourmeme.com/random')
+            .then((res) => {
+                let $ = cheerio.load(res.data);
+                let meme = {};
+                meme.imageUrl = $("meta[property='og:image']").attr('content');
+                meme.imageWidth = $("meta[property='og:image:width']").attr('content');
+                meme.imageHeight = $("meta[property='og:image:height']").attr('content');
+                io.emit('newMeme', generateMeme(message.from, meme));
+                callback();
+            })
+            .catch(e => {
+                console.log('Error fetching meme. ', e);
+                callback();
+            });
     });
 });
 

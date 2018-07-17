@@ -6,4 +6,12 @@ const generateMessage = (from, text) => {
     };
 };
 
-module.exports = {generateMessage};
+const generateMeme = (from, meme) => {
+    return {
+        from,
+        meme,
+        createdAt: new Date().getTime()
+    };
+};
+
+module.exports = {generateMessage, generateMeme};

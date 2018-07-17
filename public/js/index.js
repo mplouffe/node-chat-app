@@ -15,13 +15,35 @@ socket.on('newMessage', function(message) {
     $('#messages').append(li);
 });
 
+socket.on('newMeme', function(data) {
+    console.log('newMeme fired');
+    let li = $('<li></li>');
+    let img = $('<img />', {
+        src: data.meme.imageUrl
+    });
+    li.append(img);
+
+    $('#messages').append(li);
+});
+
 $('#message-form').on('submit', function(e) {
     e.preventDefault();
 
+    let messageTextbox = $('[name=message]');
     socket.emit('createMessage', {
         from: 'User',
-        text: $('[name=message]').val()
+        text: messageTextbox.val()
     }, function() {
+        messageTextbox.val('');
+    });
+});
 
+let memeButton = $('#fire-meme');
+memeButton.on('click', function(e) {
+    memeButton.attr('disabled', 'disabled').text('Firing...');   
+    socket.emit('fireMeme', {
+        from: 'User'
+    }, function() {
+      memeButton.removeAttr('disabled').text('Fire Meme');  
     });
 });
