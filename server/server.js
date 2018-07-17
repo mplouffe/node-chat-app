@@ -13,18 +13,26 @@ const io = socketIO(server);
 io.on('connection', (socket) => {
     console.log('New user connected');
 
+    socket.emit('newMessage', {
+        from: 'Admin',
+        text: 'Welcome to the chat app.',
+        createdAt: new Date().getTime()
+    });
+    socket.broadcast.emit('newMessage', {
+        from: 'Admin',
+        text: 'A new user has entered.',
+        createdAt: new Date().getTime()
+    });
     socket.on('disconnect', () => {
         console.log('User disconnected.');
     });
 
-    socket.on('createMessage', (newMessage) => {
-        console.log('NewMessage: ', newMessage);
-    });
-
-    socket.emit('newMessage', {
-        from: 'John',
-        text: 'see you then',
-        createdAt: 123123
+    socket.on('createMessage', (message) => {
+        io.emit('newMessage', {
+            from: message.from,
+            text: message.text,
+            createdAt: new Date().getTime()
+        });
     });
 });
 
