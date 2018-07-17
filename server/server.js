@@ -5,7 +5,7 @@ const socketIO = require('socket.io');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-const {generateMessage, generateMeme} = require('./utils/message');
+const {generateMessage, generateMeme, createMeme} = require('./utils/message');
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
 
@@ -32,13 +32,7 @@ io.on('connection', (socket) => {
 
         axios.get('https://knowyourmeme.com/random')
             .then((res) => {
-                let $ = cheerio.load(res.data);
-                let meme = {};
-                let imageWidth = parseInt($("meta[property='og:image:width']").attr('content'));
-                meme.title = $("meta[property='og:title']").attr('content');
-                meme.description = $("meta[property='og:description']").attr('content');
-                meme.imageWidth = imageWidth < 300 ? imageWidth : 300;
-                meme.imageUrl = $("meta[property='og:image']").attr('content');
+                let meme = createMeme(cheerio.load(res.data));
                 io.emit('newMeme', generateMeme(message.from, meme));
                 callback();
             })
