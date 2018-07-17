@@ -29,13 +29,16 @@ io.on('connection', (socket) => {
     });
 
     socket.on('fireMeme', (message, callback) => {
+
         axios.get('https://knowyourmeme.com/random')
             .then((res) => {
                 let $ = cheerio.load(res.data);
                 let meme = {};
+                let imageWidth = parseInt($("meta[property='og:image:width']").attr('content'));
+                meme.title = $("meta[property='og:title']").attr('content');
+                meme.description = $("meta[property='og:description']").attr('content');
+                meme.imageWidth = imageWidth < 300 ? imageWidth : 300;
                 meme.imageUrl = $("meta[property='og:image']").attr('content');
-                meme.imageWidth = $("meta[property='og:image:width']").attr('content');
-                meme.imageHeight = $("meta[property='og:image:height']").attr('content');
                 io.emit('newMeme', generateMeme(message.from, meme));
                 callback();
             })

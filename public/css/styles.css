@@ -172,6 +172,18 @@
     color: #999;
   }
   
+  .meme__title h5 {
+      font-size: 1.7rem;
+      font-weight: 600;
+      font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+      padding: 10px 5px 5px 15px;
+  }
+
+  .meme__description {
+      width: 300px;
+      padding: 5px;
+      font-style: italic;
+  }
   @media (max-width: 600px) {
     * {
       font-size: 1rem;

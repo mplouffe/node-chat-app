@@ -10,22 +10,29 @@ socket.on('disconnect', function() {
 
 socket.on('newMessage', function(message) {
     let formattedTime = moment(message.createdAt).format('h:mm a');
-    let li = $('<li></li>');
-    li.text(message.from + " " + formattedTime + ": " + message.text);
+    let template = $('#message-template').html();
+    let html = Mustache.render(template, {
+        text: message.text,
+        from: message.from,
+        createdAt: formattedTime
+    });
 
-    $('#messages').append(li);
+    $('#messages').append(html);
 });
 
 socket.on('newMeme', function(data) {
     let formattedTime = moment(data.createdAt).format('h:mm a');
-    let li = $('<li></li>');
-    li.text(data.from + " " + formattedTime + ": ");
-    let img = $('<img />', {
-        src: data.meme.imageUrl
+    let template = $('#meme-template').html();
+    let html = Mustache.render(template, {
+        from: data.from,
+        createdAt: formattedTime,
+        imageUrl: data.meme.imageUrl,
+        imageWidth: data.meme.imageWidth,
+        title: data.meme.title,
+        description: data.meme.description
     });
-    li.append(img);
 
-    $('#messages').append(li);
+    $('#messages').append(html);
 });
 
 $('#message-form').on('submit', function(e) {
