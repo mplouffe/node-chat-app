@@ -1,8 +1,10 @@
+const moment = require('moment');
+
 const generateMessage = (from, text) => {
     return {
         from,
         text,
-        createdAt: new Date().getTime()
+        createdAt: moment().valueOf()
     };
 };
 
@@ -10,7 +12,7 @@ const generateMeme = (from, meme) => {
     return {
         from,
         meme,
-        createdAt: new Date().getTime()
+        createdAt: moment().valueOf()
     };
 };
 

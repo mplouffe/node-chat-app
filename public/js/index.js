@@ -9,15 +9,17 @@ socket.on('disconnect', function() {
 });
 
 socket.on('newMessage', function(message) {
+    let formattedTime = moment(message.createdAt).format('h:mm a');
     let li = $('<li></li>');
-    li.text(`${message.from}: ${message.text}`);
+    li.text(message.from + " " + formattedTime + ": " + message.text);
 
     $('#messages').append(li);
 });
 
 socket.on('newMeme', function(data) {
-    console.log('newMeme fired');
+    let formattedTime = moment(data.createdAt).format('h:mm a');
     let li = $('<li></li>');
+    li.text(data.from + " " + formattedTime + ": ");
     let img = $('<img />', {
         src: data.meme.imageUrl
     });
