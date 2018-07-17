@@ -47,15 +47,20 @@ io.on('connection', (socket) => {
     });
 
     socket.on('createMessage', (message, callback) => {
-        io.emit('newMessage', generateMessage(message.from, message.text));
+        let user = users.getUser(socket.id);
+
+        if(user && isRealString(message.text)) {
+            io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+        }
         callback();
     });
 
     socket.on('fireMeme', (message, callback) => {
+        let user = users.getUser(socket.id);
         axios.get('https://knowyourmeme.com/random')
             .then((res) => {
                 let meme = createMeme(cheerio.load(res.data));
-                io.emit('newMeme', generateMeme(message.from, meme));
+                io.to(user.room).emit('newMeme', generateMeme(user.name, meme));
                 callback();
             })
             .catch(e => {
